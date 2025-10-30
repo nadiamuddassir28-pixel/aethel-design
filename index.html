@@ -1,103 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Aethel Design | Mustufa Portfolio</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Aethel Design | Mustufa Portfolio</title>
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Three.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <!-- EmailJS -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+	<!-- Tailwind -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<!-- Three.js -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+	<!-- EmailJS -->
+	<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
-  <style>
-    :root { --glow-color: 0,192,255; --ai-glow: 255,215,0; }
-    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color:#E0F2F1; background:#030712; overflow-x:hidden; }
-    .text-glow { text-shadow:0 0 4px rgba(var(--glow-color),0.6),0 0 8px rgba(var(--glow-color),0.4),0 0 12px rgba(var(--glow-color),0.2); }
-    .input-glow{width:100%;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(var(--glow-color),0.3);border-radius:8px;color:#fff;}
-    .cta-button{transition:all .25s;box-shadow:0 0 10px rgba(var(--glow-color),0.7);border:2px solid rgba(var(--glow-color),0.5)}
-    .cta-button:hover{transform:scale(1.03);box-shadow:0 0 20px rgba(var(--glow-color),1)}
-    .site-header{position:fixed;top:0;left:0;width:100%;background:rgba(3,7,18,0.75);backdrop-filter:blur(4px);z-index:40}
-    #bg-canvas{position:fixed;inset:0;z-index:0}
-    .main-content{position:relative;z-index:10;min-height:100vh;padding-top:6.5rem}
-    .loader{border:3px solid rgba(255,255,255,0.2);border-top:3px solid #ffd700;border-radius:50%;width:14px;height:14px;animation:spin 1s linear infinite;display:inline-block;margin-right:8px;vertical-align:middle}
-    @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-  </style>
+	<style>
+		:root { 
+			--glow-color: 0,192,255; /* Cyan */
+			--ai-glow: 255,215,0; /* Gold/Yellow */
+		}
+		body { 
+			font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; 
+			color:#E0F2F1; 
+			background:#030712; 
+			overflow-x:hidden; 
+			min-height: 100vh;
+		}
+		
+		/* Main glow for titles/headers */
+		.text-glow { 
+			text-shadow:0 0 4px rgba(var(--glow-color),0.8), 
+					    0 0 10px rgba(var(--glow-color),0.5), 
+					    0 0 20px rgba(var(--glow-color),0.2); 
+		}
+		
+		/* Input glow for form fields */
+		.input-glow{
+			width:100%;
+			padding:12px;
+			background:rgba(255,255,255,0.05);
+			border:1px solid rgba(var(--glow-color),0.3);
+			border-radius:8px;
+			color:#fff;
+			transition: border-color 0.3s, box-shadow 0.3s;
+		}
+		.input-glow:focus {
+			border-color: rgba(var(--glow-color), 0.8);
+			box-shadow: 0 0 0 3px rgba(var(--glow-color), 0.3);
+			outline: none;
+		}
+
+		/* Global Glass Button (CTA) Styling */
+		.cta-button {
+			/* Glass effect properties */
+			backdrop-filter: blur(8px);
+			background-color: rgba(0, 192, 255, 0.1); /* Cyan translucent background */
+			border: 1px solid rgba(0, 192, 255, 0.4);
+			box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+			transition: all 0.3s ease-in-out;
+		}
+		.cta-button:hover {
+			transform: translateY(-2px) scale(1.02);
+			/* Stronger cyan glow on hover */
+			box-shadow: 0 0 30px rgba(0, 192, 255, 0.7), 0 0 5px rgba(0, 192, 255, 0.5);
+			background-color: rgba(0, 192, 255, 0.25) !important; /* Slightly less transparent */
+		}
+
+		/* Special Gold Glass Button for Highlighted Pack */
+		.glass-button-gold {
+			backdrop-filter: blur(8px);
+			background-color: rgba(255, 215, 0, 0.1); /* Gold translucent background */
+			border: 1px solid rgba(255, 215, 0, 0.4);
+			box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+			transition: all 0.3s ease-in-out;
+		}
+		.glass-button-gold:hover {
+			background-color: rgba(255, 215, 0, 0.25);
+			transform: translateY(-2px) scale(1.02);
+			/* Stronger gold glow on hover */
+			box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
+		}
+
+
+		/* Package Card Styling - Includes hover animation */
+		.package-card {
+			background: #0d111c;
+			border: 1px solid rgba(var(--glow-color), 0.1);
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+			transition: all 0.4s ease-in-out;
+			/* Ensures all content inside the card, including the price/title block, is centered */
+			text-align: center; 
+		}
+		.package-card:hover {
+			transform: scale(1.05) translateY(-5px);
+			border-color: rgba(var(--glow-color), 0.5);
+			box-shadow: 0 0 25px rgba(var(--glow-color), 0.5);
+		}
+
+
+		/* Fixed header */
+		.site-header{position:fixed;top:0;left:0;width:100%;background:rgba(3,7,18,0.75);backdrop-filter:blur(4px);z-index:40}
+		/* Three.js canvas */
+		#bg-canvas{position:fixed;inset:0;z-index:0}
+		/* Content wrapper */
+		.main-content{position:relative;z-index:10;min-height:100vh;padding-top:6.5rem}
+		/* Loader for AI requests */
+		.loader{border:3px solid rgba(255,255,255,0.2);border-top:3px solid #ffd700;border-radius:50%;width:14px;height:14px;animation:spin 1s linear infinite;display:inline-block;margin-right:8px;vertical-align:middle}
+		@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+		/* Custom Animation for Title Pulse */
+		.title-pulse {
+			animation: pulse-light 5s infinite cubic-bezier(0.4, 0, 0.6, 1);
+		}
+		@keyframes pulse-light {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.9; }
+		}
+
+		/* Custom scroll behavior for smooth transitions */
+		html { scroll-behavior: smooth; }
+
+	</style>
 </head>
 <body>
 
-  <!-- audio (optional) -->
-  <audio id="bg-music" loop>
-    <source src="golden brown ending part looped (slowed _ reverb).mp3" type="audio/mpeg">
-  </audio>
-  <button id="mute-toggle" aria-label="Toggle audio" style="position:fixed;right:20px;top:20px;z-index:50;padding:10px;border-radius:50%;background:rgba(0,192,255,0.08);border:1px solid rgba(0,192,255,0.2);">
-    <div id="speaker-icon"></div>
-  </button>
+	<!-- audio (optional) -->
+	<audio id="bg-music" loop>
+		<!-- NOTE: Local file paths like this will not work in a remote environment. 
+			Please use a publicly accessible URL for your music if you want it to play. -->
+		<!-- <source src="golden brown ending part looped (slowed _ reverb).mp3" type="audio/mpeg"> -->
+	</audio>
+	<button id="mute-toggle" aria-label="Toggle audio" style="position:fixed;right:20px;top:20px;z-index:50;padding:10px;border-radius:50%;background:rgba(0,192,255,0.08);border:1px solid rgba(0,192,255,0.2);">
+		<div id="speaker-icon"></div>
+	</button>
 
-  <!-- three.js background -->
-  <div id="bg-canvas"></div>
+	<!-- three.js background -->
+	<div id="bg-canvas"></div>
 
-  <div class="main-content flex flex-col items-center p-6 md:p-12 text-center">
-    <div class="site-header w-full py-4 px-8 flex justify-between items-center">
-      <h2 class="text-xl font-bold text-glow">Aethel Design</h2>
-      <nav class="space-x-4">
-        <button onclick="showView('home')" class="text-cyan-300 hover:text-white">Home</button>
-        <button onclick="showView('contact')" class="text-cyan-300 hover:text-white">Order Now</button>
-      </nav>
-    </div>
+	<div class="main-content flex flex-col items-center p-6 md:p-12 text-center">
+		<div class="site-header w-full py-4 px-8 flex justify-between items-center">
+			<h2 class="text-xl font-bold text-glow">Aethel Design</h2>
+			<nav class="space-x-4">
+				<a href="#home-section" onclick="showView('home')" class="text-cyan-300 hover:text-white transition duration-200">Home</a>
+				<a href="#pricing-section" onclick="showView('home', 'pricing-section')" class="text-cyan-300 hover:text-white transition duration-200 hidden md:inline">Pricing</a>
+				<button onclick="showView('contact')" class="text-cyan-300 hover:text-white transition duration-200">Order Now</button>
+			</nav>
+		</div>
 
-    <!-- Home -->
-    <div id="home-view" class="w-full max-w-4xl mx-auto">
-      <header class="mb-8">
-        <h1 class="text-5xl md:text-7xl font-extrabold text-white text-glow mb-2">Aethel Design</h1>
-        <p class="text-xl md:text-2xl text-cyan-300">Graphics Designer & Video Editor — Mustufa</p>
-      </header>
+		<!-- Home -->
+		<div id="home-view" class="w-full max-w-6xl mx-auto">
+			<header id="home-section" class="mb-12 pt-16">
+				<h1 class="text-5xl md:text-8xl font-black text-white text-glow title-pulse mb-4 tracking-tight">Aethel Design</h1>
+				<p class="text-xl md:text-3xl font-extralight text-cyan-300">Graphics Designer & Video Editor — <span class="font-bold">Mustufa</span></p>
+			</header>
+			
+			<!-- Primary CTA & Info -->
+			<div class="flex flex-col items-center gap-6 mb-16">
+				<section class="bg-white/5 p-6 rounded-xl border border-cyan-500/20 max-w-4xl mx-auto">
+					<h2 class="text-2xl font-semibold text-white text-glow mb-4">About Mustufa</h2>
+					<p class="text-gray-200 text-lg leading-relaxed">Hello! I'm <b>Mustufa</b>, a passionate visual creator specializing in high-impact design and editing. I excel at crafting engaging <b>graphics</b> and dynamic <b>video edits</b>, turning raw ideas into polished, professional-grade content. My workflow is built on <b>speed</b>, modernity, and <b>precision</b>, allowing me to transform initial concepts into <b>strong</b> visual <b>stories</b> that capture attention across any platform. I deliver clean, fast, and modern results, pushing for fresh aesthetics in every project. <span class="text-cyan-400 font-medium">Let's collaborate to build something exceptional.</span></p>
+				</section>
+				<!-- Applied cta-button glass style -->
+				<button onclick="showView('contact')" class="cta-button px-8 py-4 text-xl rounded-full text-white font-black uppercase tracking-wider">Start Your Project Now</button>
+				<section class="bg-white/5 p-4 rounded-xl border border-cyan-500/20 w-full max-w-xs mx-auto text-sm">
+					<p class="text-gray-300"><span class="font-medium text-cyan-300">Email:</span> mustafaincidius@gmail.com</p>
+					<p class="text-gray-300"><span class="font-medium text-cyan-300">Phone:</span> 03351271603</p>
+				</section>
+			</div>
 
-      <section class="bg-white/5 p-6 rounded-xl border border-cyan-500/20 mb-6">
-        <h2 class="text-2xl font-semibold text-white text-glow mb-2">About Mustufa</h2>
-        <p class="text-gray-200">Hello! I'm <b>Mustufa</b>, a passionate visual creator specializing in high-impact design and editing. I excel at crafting engaging <b>graphics</b> and dynamic <b>video edits</b>, turning raw ideas into polished, professional-grade content. My workflow is built on <b>speed</b>, modernity, and <b>precision</b>, allowing me to transform initial concepts into <b>strong</b> visual <b>stories</b> that capture attention across any platform.I deliver clean, fast, and modern results, pushing for fresh aesthetics in every project. Let's collaborate to build something exceptional..</p>
-      </section>
+			<!-- Pricing Packages Section -->
+			<section id="pricing-section" class="mb-16 pt-8">
+				<h2 class="text-4xl font-extrabold text-white text-glow mb-10">Exclusive Editing Packages</h2>
+				
+				<!-- Grid alignment is solid -->
+				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 max-w-6xl mx-auto">
+					
+					<!-- Single Short Form -->
+					<div class="package-card p-6 rounded-xl flex flex-col justify-between md:col-span-1">
+						<!-- Content is centered by parent 'package-card' -->
+						<div>
+							<h3 class="text-2xl font-bold text-cyan-300 mb-2">Short Clip</h3>
+							<p class="text-4xl font-black text-white">$5.99</p>
+							<p class="text-gray-400 mt-2">Per Edit</p>
+						</div>
+						<ul class="text-left text-gray-300 my-4 space-y-2 mx-auto max-w-[200px] w-full">
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> Up to 60 seconds</li>
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> Modern Transitions</li>
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> Social Media Ready</li>
+						</ul>
+						<!-- Applied cta-button glass style -->
+						<button onclick="document.getElementById('description').value='I would like one Short Form Video Clip edit (60 seconds max).'; showView('contact');" class="w-full cta-button px-4 py-2 mt-4 rounded-lg text-white font-bold text-sm">Order</button>
+					</div>
 
-      <div class="flex gap-4 justify-center mb-6">
-        <button onclick="showView('contact')" class="cta-button px-6 py-3 rounded-full bg-cyan-700/30 text-white font-bold">Start Your Project</button>
-      </div>
+					<!-- Single Long Form -->
+					<div class="package-card p-6 rounded-xl flex flex-col justify-between md:col-span-1">
+						<!-- Content is centered by parent 'package-card' -->
+						<div>
+							<h3 class="text-2xl font-bold text-cyan-300 mb-2">Long Form</h3>
+							<p class="text-4xl font-black text-white">$10.99</p>
+							<p class="text-gray-400 mt-2">Per Edit</p>
+						</div>
+						<ul class="text-left text-gray-300 my-4 space-y-2 mx-auto max-w-[200px] w-full">
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> Up to 10 minutes</li>
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> Advanced Cuts/Pacing</li>
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> B-Roll Integration</li>
+						</ul>
+						<!-- Applied cta-button glass style -->
+						<button onclick="document.getElementById('description').value='I would like one Long Form Video edit (10 minutes max).'; showView('contact');" class="w-full cta-button px-4 py-2 mt-4 rounded-lg text-white font-bold text-sm">Order</button>
+					</div>
+					
+					<!-- 5 Video Pack (Highlighted) -->
+					<div class="package-card p-8 rounded-xl flex flex-col justify-between md:col-span-1 bg-cyan-900/10 transform scale-[1.05] relative border-2 border-cyan-500 shadow-xl">
+						<div class="absolute top-0 right-0 bg-yellow-600 text-black px-3 py-1 text-xs font-black rounded-bl-lg rounded-tr-xl shadow-lg">ULTIMATE VALUE</div>
+						<!-- Content is centered by parent 'package-card' -->
+						<div>
+							<h3 class="text-3xl font-bold text-yellow-300 mb-2 text-glow">5x Video Pack</h3>
+							<p class="text-5xl font-black text-white">$59.99</p>
+							<p class="text-gray-400 mt-2">Total Pack Price</p>
+						</div>
+						<ul class="text-left text-gray-200 my-6 space-y-2 mx-auto max-w-[200px] w-full">
+							<li class="flex items-center"><span class="text-yellow-400 mr-2">★</span> 5 Edits (Mix Short/Long)</li>
+							<li class="flex items-center"><span class="text-yellow-400 mr-2">★</span> Priority Turnaround</li>
+							<li class="flex items-center"><span class="text-yellow-400 mr-2">★</span> Includes 2 Thumbnails</li>
+						</ul>
+						<!-- Applied special glass-button-gold style -->
+						<button onclick="document.getElementById('description').value='I am purchasing the 5x Video Pack (Mix Short/Long) which also includes 2 free thumbnails.'; showView('contact');" class="w-full glass-button-gold px-6 py-3 mt-4 rounded-xl text-white font-black text-lg">Select Pack</button>
+					</div>
 
-      <section class="bg-white/5 p-4 rounded-xl border border-cyan-500/20 max-w-xl mx-auto">
-        <p class="text-gray-300"><span class="font-medium text-cyan-300">Email:</span> mustafaincidius@gmail.com</p>
-        <p class="text-gray-300"><span class="font-medium text-cyan-300">Phone:</span> 03351271603</p>
-      </section>
-    </div>
+					<!-- Single Thumbnail -->
+					<div class="package-card p-6 rounded-xl flex flex-col justify-between md:col-span-1">
+						<!-- Content is centered by parent 'package-card' -->
+						<div>
+							<h3 class="text-2xl font-bold text-cyan-300 mb-2">Thumbnail</h3>
+							<p class="text-4xl font-black text-white">$4.99</p>
+							<p class="text-gray-400 mt-2">Per Graphic</p>
+						</div>
+						<ul class="text-left text-gray-300 my-4 space-y-2 mx-auto max-w-[200px] w-full">
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> Custom Design</li>
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> High CTR Focus</li>
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> Quick Revision</li>
+						</ul>
+						<!-- Applied cta-button glass style -->
+						<button onclick="document.getElementById('description').value='I would like one custom Thumbnail Graphic.'; showView('contact');" class="w-full cta-button px-4 py-2 mt-4 rounded-lg text-white font-bold text-sm">Order</button>
+					</div>
 
-    <!-- Contact -->
-    <div id="contact-view" class="w-full max-w-3xl mx-auto hidden mt-8">
-      <section class="p-8 bg-white/5 rounded-xl border border-cyan-500/20 shadow-2xl text-left">
-        <h1 class="text-3xl font-extrabold text-glow mb-2">Order Your Custom Project</h1>
-        <p class="text-cyan-300 mb-6">Fill the brief. Use the AI refine tool to make the description crisp — then send it directly to my Gmail.</p>
+					<!-- 5 Thumbnail Pack -->
+					<div class="package-card p-6 rounded-xl flex flex-col justify-between md:col-span-1">
+						<!-- Content is centered by parent 'package-card' -->
+						<div>
+							<h3 class="text-2xl font-bold text-cyan-300 mb-2">5x Thumbnail</h3>
+							<p class="text-4xl font-black text-white">$15.99</p>
+							<p class="text-gray-400 mt-2">Total Pack Price</p>
+						</div>
+						<ul class="text-left text-gray-300 my-4 space-y-2 mx-auto max-w-[200px] w-full">
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> 5 Unique Graphics</li>
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> Consistent Branding</li>
+							<li class="flex items-center"><span class="text-cyan-400 mr-2">✓</span> Bulk Discount</li>
+						</ul>
+						<!-- Applied cta-button glass style -->
+						<button onclick="document.getElementById('description').value='I am purchasing the 5x Thumbnail Pack.'; showView('contact');" class="w-full cta-button px-4 py-2 mt-4 rounded-lg text-white font-bold text-sm">Order</button>
+					</div>
+					
+				</div>
+			</section>
+			
+		</div>
 
-        <form id="contact-form" class="space-y-4">
-          <input class="input-glow" name="Client Name" placeholder="Your name" required />
-          <input class="input-glow" name="Client Email" type="email" placeholder="your@email.com" required />
-          <input class="input-glow" name="Phone" placeholder="+92 3XX XXXXXXX" required />
-          <input class="input-glow" name="Budget" type="number" placeholder="Budget (USD)" required />
+		<!-- Contact -->
+		<div id="contact-view" class="w-full max-w-3xl mx-auto hidden mt-8 md:mt-16">
+			<!-- Added transition classes for page entrance animation -->
+			<section class="p-8 md:p-12 bg-white/5 rounded-2xl border border-cyan-500/30 shadow-2xl text-left transition duration-500 ease-out" id="contact-section">
+				<h1 class="text-4xl font-extrabold text-glow mb-3 text-white">Start Your Custom Project</h1>
+				<p class="text-cyan-300 mb-8 text-lg">Use the form below to outline your project. Our <span class="text-yellow-300 font-semibold">AI brief tool</span> will help you submit a professional request.</p>
 
-          <label class="text-cyan-200 text-glow">Project Description</label>
-          <div class="flex gap-3 mb-2">
-            <button id="refine-btn" type="button" class="px-4 py-2 rounded-full font-semibold animated-button-ai">✨ Refine with AI</button>
-            <button id="use-refined-btn" type="button" class="px-4 py-2 rounded-full border border-yellow-300 text-yellow-300 hidden">Use refined text</button>
-            <div id="refine-status" class="text-yellow-300 ml-2 self-center"></div>
-          </div>
+				<form id="contact-form" class="space-y-6">
+					
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<input class="input-glow" name="Client Name" placeholder="Your Name" required />
+						<input class="input-glow" name="Client Email" type="email" placeholder="your@email.com" required />
+						<input class="input-glow" name="Phone" placeholder="+92 3XX XXXXXXX (Optional)" />
+						<!-- Updated budget input to reflect the new range and added min/max attributes -->
+						<input class="input-glow" name="Budget" type="number" placeholder="Budget (USD) - $3 to $10,000" min="3" max="10000" required />
+					</div>
+					<p class="text-xs text-gray-500 text-center -mt-2">We handle projects ranging from quick short clips to major campaigns. Please set a realistic budget.</p>
 
-          <textarea id="description" name="Project Description" class="input-glow" rows="6" placeholder="I need a 60-second cinematic video..." required></textarea>
+					<label for="description" class="text-cyan-200 text-glow block mt-6 font-semibold">Project Description (Be detailed!)</label>
+					
+					<div class="flex flex-wrap gap-3 items-center mb-2">
+						<!-- Applied cta-button glass style -->
+						<button id="refine-btn" type="button" class="glass-button-gold px-5 py-2 rounded-full font-semibold text-yellow-300 transition duration-300 shadow-md">✨ Refine with AI</button>
+						
+						<!-- Applied cta-button glass style -->
+						<button id="use-refined-btn" type="button" class="cta-button px-5 py-2 rounded-full text-cyan-300 hidden transition duration-300 shadow-md">Use Refined Text</button>
+						
+						<!-- Status Indicator -->
+						<div id="refine-status" class="text-yellow-300 ml-2 self-center text-sm"></div>
+					</div>
 
-          <div id="form-status" class="text-sm text-center text-green-300"></div>
+					<!-- Main Textarea Input -->
+					<textarea id="description" name="Project Description" class="input-glow" rows="8" placeholder="Outline your deliverables, required length, style references, and target audience here..." required></textarea>
 
-          <button type="submit" class="cta-button w-full px-6 py-3 rounded-xl bg-cyan-700/50 text-white font-bold">Send Project Details</button>
-        </form>
-      </section>
-    </div>
-  </div>
+					<!-- AI Refinement Output Preview -->
+					<div id="ai-preview" class="hidden mt-4 p-4 bg-yellow-900/10 border border-yellow-500/30 rounded-lg text-sm text-yellow-200 whitespace-pre-wrap shadow-md">
+						<h4 class="font-bold mb-2 flex items-center">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 mr-1 text-yellow-300">
+								<path d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v2.25H5.25A2.25 2.25 0 0 0 3 11.25v6.75a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H14.25V6.75a5.25 5.25 0 0 0-5.25-5.25ZM6.75 9h6.75V6.75a3.75 3.75 0 1 1 7.5 0V9h1.5A.75.75 0 0 1 21 9.75v6.75a.75.75 0 0 1-.75.75H3.75A.75.75 0 0 1 3 16.5v-6.75A.75.75 0 0 1 3.75 9h1.5v1.5a.75.75 0 0 0 1.5 0V9Z" clip-rule="evenodd" />
+							</svg>
+							AI Refined Brief:
+						</h4>
+						<p id="ai-refined-text">Refined content will appear here.</p>
+					</div>
+
+
+					<div id="form-status" class="text-sm text-center text-green-300"></div>
+
+					<!-- Applied cta-button glass style -->
+					<button type="submit" class="cta-button w-full px-8 py-4 rounded-xl text-white font-black text-xl uppercase tracking-wider">Send Project Brief</button>
+				</form>
+			</section>
+		</div>
+	</div>
 
 <script>
 /* ========== CONFIG - REPLACE THESE ========== */
@@ -108,191 +328,268 @@ const EMAILJS_PUBLIC_KEY = "4jVEen1yun6fU-FJw";
 const EMAILJS_SERVICE_ID = "service_p08nyl3";
 const EMAILJS_TEMPLATE_ID = "template_cben6rf";
 
-/* Backend endpoint that calls Gemini. Deploy the server from server.js below.
-   Example: https://your-deploy-url.com/api/refine
-*/
-const REFINER_ENDPOINT = "/api/refine"; // if you deploy server on same host. Otherwise use full URL.
+// --- Gemini API Configuration ---
+// API Key is automatically provided by the Canvas environment at runtime
+const API_KEY = "AIzaSyDWbTWWoKJSmsiOvhsm78MBAB_7AC2cjmk";
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+/* ------------------------------------------- */
+
 
 (function(){ emailjs.init(EMAILJS_PUBLIC_KEY); })();
 
 /* ---------- UI & view switching ---------- */
-function showView(view) {
-  document.getElementById('home-view').classList.add('hidden');
-  document.getElementById('contact-view').classList.add('hidden');
-  document.getElementById(`${view}-view`).classList.remove('hidden');
-  window.scrollTo({top:0,behavior:'smooth'});
+/**
+ * Switches between views with a fade-and-slide animation.
+ * @param {string} view - The ID of the view to show ('home' or 'contact').
+ * @param {string} [scrollToId] - Optional ID of an element to scroll to after transition (e.g., 'pricing-section').
+ */
+function showView(view, scrollToId) {
+	// Simple animation for view transition
+	const homeView = document.getElementById('home-view');
+	const contactView = document.getElementById('contact-view');
+	
+	const views = [homeView, contactView];
+	
+	views.forEach(v => {
+		// Prepare for animation by setting initial hidden state
+		v.classList.remove('opacity-100', 'translate-y-0', 'transition', 'duration-500', 'ease-out');
+		v.classList.add('opacity-0', 'translate-y-4', 'hidden');
+	});
+
+	// Wait for a moment to allow CSS classes to register before showing the new view
+	setTimeout(() => {
+		const targetView = document.getElementById(`${view}-view`);
+		if (targetView) {
+			targetView.classList.remove('hidden');
+			// Force reflow for transition to work
+			void targetView.offsetWidth; 
+			// Apply final animation state
+			targetView.classList.remove('opacity-0', 'translate-y-4');
+			targetView.classList.add('opacity-100', 'translate-y-0', 'transition', 'duration-500', 'ease-out');
+			
+			// Handle scrolling to specific element
+			if (scrollToId) {
+				const targetEl = document.getElementById(scrollToId);
+				if (targetEl) {
+					targetEl.scrollIntoView({behavior:'smooth', block: 'start'});
+					return; // Stop default window scroll
+				}
+			}
+			window.scrollTo({top:0,behavior:'smooth'});
+		}
+	}, 10);
 }
 
 /* ---------- three.js background (keeps your previous look) ---------- */
 function initThreeJS(){
-  const container = document.getElementById('bg-canvas');
-  const width = innerWidth, height = innerHeight;
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, width/height, 0.1, 1000);
-  camera.position.z = 100;
-  const renderer = new THREE.WebGLRenderer({ antialias:true });
-  renderer.setSize(width,height);
-  container.appendChild(renderer.domElement);
-  const geometry = new THREE.BufferGeometry();
-  const positions=[], colors=[];
-  const color = new THREE.Color();
-  for (let i=0;i<500;i++){
-    positions.push(THREE.MathUtils.randFloatSpread(400), THREE.MathUtils.randFloatSpread(400), THREE.MathUtils.randFloatSpread(400));
-    color.setHSL(0.5 + Math.random()*0.2, 1, 0.6);
-    colors.push(color.r,color.g,color.b);
-  }
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions,3));
-  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors,3));
-  const material = new THREE.PointsMaterial({ size:1.5, vertexColors:true, transparent:true });
-  const particles = new THREE.Points(geometry, material);
-  scene.add(particles);
-  window.addEventListener('resize', ()=>{ renderer.setSize(innerWidth,innerHeight); camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); });
-  (function animate(){ requestAnimationFrame(animate); particles.rotation.x += 0.0005; particles.rotation.y += 0.001; renderer.render(scene,camera); })();
+	const container = document.getElementById('bg-canvas');
+	const width = innerWidth, height = innerHeight;
+	const scene = new THREE.Scene();
+	const camera = new THREE.PerspectiveCamera(75, width/height, 0.1, 1000);
+	camera.position.z = 100;
+	const renderer = new THREE.WebGLRenderer({ antialias:true });
+	renderer.setSize(width,height);
+	container.appendChild(renderer.domElement);
+	const geometry = new THREE.BufferGeometry();
+	const positions=[], colors=[];
+	const color = new THREE.Color();
+	for (let i=0;i<500;i++){
+		positions.push(THREE.MathUtils.randFloatSpread(400), THREE.MathUtils.randFloatSpread(400), THREE.MathUtils.randFloatSpread(400));
+		color.setHSL(0.5 + Math.random()*0.2, 1, 0.6);
+		colors.push(color.r,color.g,color.b);
+	}
+	geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions,3));
+	geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors,3));
+	const material = new THREE.PointsMaterial({ size:1.5, vertexColors:true, transparent:true });
+	const particles = new THREE.Points(geometry, material);
+	scene.add(particles);
+	window.addEventListener('resize', ()=>{ renderer.setSize(innerWidth,innerHeight); camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); });
+	(function animate(){ requestAnimationFrame(animate); particles.rotation.x += 0.0005; particles.rotation.y += 0.001; renderer.render(scene,camera); })();
 }
 
 /* ---------- audio control ---------- */
 function setupAudioControl(){
-  const music = document.getElementById('bg-music');
-  const button = document.getElementById('mute-toggle');
-  const icon = document.getElementById('speaker-icon');
-  const iconOn = '<svg fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5" style="width:18px;height:18px"><path d="M13.5 4.06c0-1.34-1.64-2-2.58-1.28L5.5 7.5H3.8A2.2 2.2 0 001.5 9.7v4.5c0 1.2 1 2.25 2.2 2.25h1.7l5.5 4.7c.94.72 2.58.05 2.58-1.28V4.06z"/></svg>';
-  const iconOff = '<svg fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5" style="width:18px;height:18px"><path d="M4 9h3l4-4v14l-4-4H4zm12 3a4 4 0 00-1.2-2.8l1.4-1.4A6 6 0 0120 12a6 6 0 01-3.8 5.2l-1.4-1.4A4 4 0 0016 12z"/></svg>';
-  const update = ()=>{ icon.innerHTML = music.paused ? iconOff : iconOn; }
-  button.addEventListener('click', ()=>{ if (music.paused) music.play(); else music.pause(); update(); });
-  update();
+	const music = document.getElementById('bg-music');
+	const button = document.getElementById('mute-toggle');
+	const icon = document.getElementById('speaker-icon');
+	// SVG for speaker ON
+	const iconOn = '<svg fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5" style="width:18px;height:18px"><path d="M13.5 4.06c0-1.34-1.64-2-2.58-1.28L5.5 7.5H3.8A2.2 2.2 0 001.5 9.7v4.5c0 1.2 1 2.25 2.2 2.25h1.7l5.5 4.7c.94.72 2.58.05 2.58-1.28V4.06z"/></svg>';
+	// SVG for speaker OFF
+	const iconOff = '<svg fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5" style="width:18px;height:18px"><path d="M4 9h3l4-4v14l-4-4H4zm12 3a4 4 0 00-1.2-2.8l1.4-1.4A6 6 0 0120 12a6 6 0 01-3.8 5.2l-1.4-1.4A4 4 0 0016 12z"/></svg>';
+	const update = ()=>{ icon.innerHTML = music.paused ? iconOff : iconOn; }
+	button.addEventListener('click', ()=>{ if (music.paused) music.play(); else music.pause(); update(); });
+	update();
 }
 
-/* ---------- AI refine feature ---------- */
-const API_KEY = "AIzaSyDWbTWWoKJSmsiOvhsm78MBAB_7AC2cjmk"; // Add Gemini API key if needed
-        const MODEL_NAME = "gemini-2.0-flash";
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+/* ---------- AI Refinement Integration ---------- */
+// Refinement Elements
+const descriptionEl = document.getElementById('description');
+const refineBtn = document.getElementById('refine-btn');
+const useRefinedBtn = document.getElementById('use-refined-btn');
+const refineStatusEl = document.getElementById('refine-status');
+const aiPreviewEl = document.getElementById('ai-preview');
+const aiRefinedTextEl = document.getElementById('ai-refined-text');
+let refinedTextCache = '';
 
-        async function fetchWithRetry(url, options, maxRetries = 3) {
-            for (let i = 0; i < maxRetries; i++) {
-                try {
-                    const res = await fetch(url, options);
-                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                    return res;
-                } catch (e) {
-                    if (i === maxRetries - 1) throw e;
-                    await new Promise(r => setTimeout(r, 1000 * (i + 1)));
-                }
+/**
+ * Updates the state of the refinement UI.
+ * @param {boolean} isRefining
+ * @param {string} statusText - Status message to display.
+ */
+function setRefiningState(isRefining, statusText = '') {
+    refineBtn.disabled = isRefining;
+    // Show spinner/text based on state
+    refineBtn.innerHTML = isRefining 
+		? `<div class="loader"></div> Refining...` 
+		: '✨ Refine with AI';
+    
+    refineStatusEl.innerHTML = statusText;
+    
+    // Hide 'Use' button and preview while refining
+    if (isRefining) {
+        useRefinedBtn.classList.add('hidden');
+        aiPreviewEl.classList.add('hidden');
+        aiRefinedTextEl.textContent = 'Processing...';
+    }
+}
+
+/**
+ * Implements exponential backoff for API retries.
+ * @param {string} url - The API endpoint URL.
+ * @param {object} options - The fetch options (method, headers, body).
+ * @param {number} maxRetries - Maximum number of retries.
+ * @returns {Promise<Response>}
+ */
+async function fetchWithRetry(url, options, maxRetries = 3) {
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            const response = await fetch(url, options);
+            if (response.ok) { return response; }
+            if (response.status === 429 && i < maxRetries - 1) {
+                // Rate limit error (429), retry with exponential backoff
+                const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                await new Promise(resolve => setTimeout(resolve, delay));
+                continue;
             }
+            throw new Error(`API request failed with status: ${response.status} ${response.statusText}`);
+        } catch (error) {
+            if (i === maxRetries - 1) { throw error; }
+            // Non-rate limit error or network issue, retry with backoff
+            const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+}
+
+/**
+ * Handles the AI Refinement click event.
+ */
+async function handleRefineClick() {
+    const draftText = descriptionEl.value.trim();
+
+    if (draftText.length < 20) {
+        refineStatusEl.innerHTML = '<span style="color:#ff6b6b">Please write a longer description first (min 20 chars).</span>';
+        return;
+    }
+
+    setRefiningState(true, 'Consulting AI...');
+    refinedTextCache = '';
+    
+    // Updated instructions to enforce structure
+    const refinementInstruction = "Take the following draft project description and rewrite it to be a professional, concise, and clearly structured project brief for a graphic designer and video editor. Focus on the core needs, deliverables, and tone. Structure the output with clear headings like 'Project Goal', 'Deliverables', and 'Required Style'. Remove any informal language. Keep the length as close to the original as possible, or slightly shorter.";
+
+    const userQuery = `Refinement Instruction: ${refinementInstruction}\n\nDraft Text:\n---\n${draftText}`;
+
+    // System instruction: Act as a concise professional editor
+    const systemPrompt = "You are an expert project brief editor. Your task is to take the user's provided 'Draft Text' and apply the 'Refinement Instruction' precisely to create a polished, professional brief. Do not add any introductory or concluding remarks, just provide the final refined text. Ensure the output is formatted with line breaks for readability.";
+
+    const payload = {
+        contents: [{ parts: [{ text: userQuery }] }],
+        systemInstruction: {
+            parts: [{ text: systemPrompt }]
+        },
+        // We omit Google Search tool here as the task is purely stylistic/editing, not fact-checking
+    };
+
+    const options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    };
+
+    try {
+        const response = await fetchWithRetry(API_URL, options);
+        const result = await response.json();
+        const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (text) {
+            refinedTextCache = text.trim();
+            aiRefinedTextEl.textContent = refinedTextCache;
+            aiPreviewEl.classList.remove('hidden');
+            useRefinedBtn.classList.remove('hidden');
+            setRefiningState(false, '<span style="color:#7fff7f">✅ Refinement ready.</span>');
+        } else {
+            throw new Error('AI returned an empty response.');
         }
 
-        async function refineProjectDescription() {
-            const textarea = document.getElementById('description');
-            const statusDiv = document.getElementById('ai-status');
-            const aiButton = document.querySelector('.animated-button-ai');
-            const userPrompt = textarea.value.trim();
+    } catch (error) {
+        console.error('AI Refinement Error:', error);
+        setRefiningState(false, '<span style="color:#ff6b6b">❌ AI Error. Check console.</span>');
+        aiRefinedTextEl.textContent = `Error: Could not refine content (${error.message}). Please try again later.`;
+        aiPreviewEl.classList.remove('hidden');
+    }
+}
 
-            if (userPrompt.length < 10) {
-                statusDiv.innerHTML = '<span style="color:red;">Please enter a longer description.</span>';
-                return;
-            }
+/**
+ * Replaces the description textarea content with the refined text.
+ */
+function handleUseRefinedClick() {
+    if (refinedTextCache) {
+        descriptionEl.value = refinedTextCache;
+        // Hide UI elements after using the text
+        aiPreviewEl.classList.add('hidden');
+        useRefinedBtn.classList.add('hidden');
+        refineStatusEl.textContent = '<span style="color:#7fff7f">Text updated.</span>';
+        refinedTextCache = '';
+    }
+}
 
-            aiButton.disabled = true;
-            statusDiv.innerHTML = '<span class="loader"></span> Refining description...';
+// Attach listeners
+refineBtn.addEventListener('click', handleRefineClick);
+useRefinedBtn.addEventListener('click', handleUseRefinedClick);
 
-            const payload = {
-                contents: [
-                    { role: "user", parts: [{ text: `You are a creative consultant. Refine this brief professionally: ${userPrompt}` }] }
-                ]
-            };
-
-            try {
-                const res = await fetchWithRetry(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (text) textarea.value = text;
-                statusDiv.innerHTML = '<span style="color:#ffd700;">✨ Refined successfully!</span>';
-            } catch {
-                statusDiv.innerHTML = '<span style="color:red;">Error generating content.</span>';
-            } finally {
-                aiButton.disabled = false;
-            }
-        }
-
-        function showView(view) {
-            document.getElementById('home-view').classList.add('hidden');
-            document.getElementById('contact-view').classList.add('hidden');
-            document.getElementById(`${view}-view`).classList.remove('hidden');
-            setTimeout(() => document.getElementById('main-content').classList.add('loaded'), 50);
-        }
-
-        function initThreeJS() {
-            const container = document.getElementById('bg-canvas');
-            const width = window.innerWidth, height = window.innerHeight;
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-            camera.position.z = 100;
-
-            const renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(width, height);
-            container.appendChild(renderer.domElement);
-
-            const geometry = new THREE.BufferGeometry();
-            const positions = [], colors = [];
-            const color = new THREE.Color();
-            for (let i = 0; i < 500; i++) {
-                positions.push(THREE.MathUtils.randFloatSpread(400));
-                positions.push(THREE.MathUtils.randFloatSpread(400));
-                positions.push(THREE.MathUtils.randFloatSpread(400));
-                color.setHSL(0.5 + Math.random() * 0.2, 1, 0.6);
-                colors.push(color.r, color.g, color.b);
-            }
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-            const material = new THREE.PointsMaterial({ size: 1.5, vertexColors: true, transparent: true });
-            const particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-
-            window.addEventListener('resize', () => {
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-            });
-
-            function animate() {
-                requestAnimationFrame(animate);
-                particles.rotation.x += 0.0005;
-                particles.rotation.y += 0.001;
-                renderer.render(scene, camera);
-            }
-            animate();
-        }
 
 /* ---------- EmailJS form submit ---------- */
 const form = document.getElementById('contact-form');
 const formStatus = document.getElementById('form-status');
 
 form.addEventListener('submit', function(e) {
-  e.preventDefault();
-  formStatus.innerHTML = '<span class="loader"></span> Sending...';
+	e.preventDefault();
+	formStatus.innerHTML = '<span class="loader"></span> Sending...';
 
-  emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, this)
-    .then(() => {
-      formStatus.innerHTML = '<span style="color:#7fff7f">✅ Sent — I will contact you soon.</span>';
-      form.reset();
-      // hide any preview
-      const preview = document.getElementById('ai-preview');
-      if (preview) preview.remove();
-    }, (err) => {
-      console.error(err);
-      formStatus.innerHTML = '<span style="color:#ff6b6b">❌ Failed to send. Try again or message me directly.</span>';
-    });
+	emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, this)
+		.then(() => {
+			formStatus.innerHTML = '<span style="color:#7fff7f">✅ Sent — I will contact you soon.</span>';
+			form.reset();
+            // Reset AI refinement UI elements on successful submission
+            aiPreviewEl.classList.add('hidden');
+            useRefinedBtn.classList.add('hidden');
+            refineStatusEl.textContent = '';
+            refinedTextCache = '';
+            // Immediately transition back to home view
+            showView('home');
+		}, (err) => {
+			console.error(err);
+			formStatus.innerHTML = '<span style="color:#ff6b6b">❌ Failed to send. Try again or message me directly.</span>';
+		});
 });
 
 /* ---------- boot ---------- */
 window.onload = function(){
-  initThreeJS();
-  setupAudioControl();
-  // show home by default
-  showView('home');
+	initThreeJS();
+	setupAudioControl();
+	// show home by default
+	showView('home');
 };
 </script>
 
